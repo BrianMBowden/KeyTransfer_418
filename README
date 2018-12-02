@@ -1,0 +1,79 @@
+Brian Bowden || 10060818
+November 7, 2018
+CPSC418 - Assignment 2
+------------------------------------------------------------------------------
+Files included:
+
+clientSecureFileTransfer.java // client side source file for this assignment
+CryptoUtilities.java // a toolkit for AES encryption and HMAC
+plain.txt // for testing purposes with encryption
+README // this document
+serverSecureFileTransfer.java // server side (and multi-threader) source file for this assignment 
+ServerThread.java // child thread source file for server side
+------------------------------------------------------------------------------
+NOTES:
+	I tested this using port 6666 and IP address 0.0.0.0
+	client will output its own "debug" file regardless of debug mode, this file is called "debug.txt"
+------------------------------------------------------------------------------
+No KNOWN bugs...
+----------------------tested using secondary terminal-------------------------
+compile both files:
+	javac clientSecureFileTransfer.java
+	javac serverSecureFileTransfer.java
+	
+in one terminal: (server side)
+	java serverSecureFileTransfer [Port #] [debug]
+
+in second terminal: (client side)
+	java clientSecureFileTransfer [IP-Address] [Port #] [debug]
+	// the IP address will appear on server side terminal, use this
+	
+port numbers must be equal
+
+The server will wait for client to connect
+Once client is connected, server will set up a child thread to wait for input from client
+
+Client will be prompted for its decision/choice via user input from keyboard
+	"exit" will kill the thread assigned to it
+		if exit is selected and there are no other running processes on server, server will stay on
+	"die" will kill all threads associated with the server and shutdown the server
+	"send" will prompt the user again:
+		prompt for shared password // key to encrypt
+		prompt for file to be encrypted // client will (try to) create this file if it does not exist (it will be empty!)
+		prompt for file output //server will (try to) create this file if it does not exist
+		
+		client reads data from file to be encrypted, hashes it, then encrypts it.
+		client sends size of aes-encrypted data 
+		and sends aes-encrypted data 
+		and sends file output name through socket to server.
+		
+Server receives input from client:
+	"exit" kill thread associated with client calling "exit"
+	"die" kill all threads and shutdown server
+	"send" prompt server:
+		prompt for shared password
+
+		receive file output name // creates file with same name if it does not exist		
+		receive size of data buffer
+		receive data
+			get and put cipher text into a buffer
+			decrypt
+			verify hash
+				if hash is good, extract plaintext
+					write plaintext to specified file
+					send positive acknowledgement
+				else, hash is not good (bad password, other problems etc)
+					send negative acknowledgement
+
+Client receives acknowledgement
+	"exit" process on either acknowledgement
+	
+Server stays alive
+
+----------------------------------------------------------------------------------
+Encryption done by AES-128-CBC standard with a shared session key between client and server
+Data Integrity kept by HMAC-SHA-1 with an appended message digest
+----------------------------------------------------------------------------------
+
+		
+	
