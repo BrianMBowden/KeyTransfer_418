@@ -130,9 +130,15 @@ public class clientSecureFileTransfer {
 			try {
 				
 			    /* prompt for password */
-			    String my_key = null;
+/*			    String my_key = null;
 			    System.out.print("Enter shared password: ");
-			    my_key = stdIn.readLine();
+			    my_key = stdIn.readLine();*/
+				
+				int bit_length = 512;
+				int certainty = 3;
+				PrimeGenerator primes = new PrimeGenerator(bit_length, certainty);
+				
+				
 				/* prompt for file name*/
 				System.out.print("Enter Input File Name: ");
 				userinput = stdIn.readLine();
