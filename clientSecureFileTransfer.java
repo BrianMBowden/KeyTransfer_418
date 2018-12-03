@@ -1,5 +1,7 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.net.*;
+import java.util.Random;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -138,6 +140,33 @@ public class clientSecureFileTransfer {
 				int certainty = 3;
 				PrimeGenerator primes = new PrimeGenerator(bit_length, certainty);
 				
+
+				/* Write user file name to socket */
+				out.writeUTF(userinput);
+				
+				/* write g and p to socket (can be public)*/
+				out.writeUTF(primes.getG().toString());
+				out.writeUTF(primes.getP().toString());
+				
+				/* generate random 'a' */ 
+				BigInteger two = new BigInteger("2");
+				Random rnd = new Random();
+				BigInteger a = new BigInteger(512, rnd); 
+				a.mod(primes.getP().subtract(two));
+				
+				/* calculate g^a */
+				BigInteger gA = primes.getG().modPow(a, primes.getP());
+				
+				/* send gA */
+				// ToDo, this needs to be a byte array
+				out.writeUTF(gA.toString());
+				
+				/* receive gB from server */
+				BigInteger gB = new BigInteger(in.readUTF());
+				
+				/* calculate gBA */
+				BigInteger gBA = gB.modPow(a, primes.getP());
+				
 				
 				/* prompt for file name*/
 				System.out.print("Enter Input File Name: ");
@@ -163,22 +192,12 @@ public class clientSecureFileTransfer {
 				if (debug) {
 					out_file = new FileOutputStream("debug.txt");
 				}
-/*				try {
-					File endFile = new File(userinput);
-					endFile.createNewFile();
-					out_file = new FileOutputStream(endFile);
-				}
-				catch (Exception e) {
-					System.out.println("failed to create file... ");
-					sock.close();
-					in.close();
-				}*/
-				out.writeUTF(userinput);
+				
 				byte[] msg = new byte[in_file.available()];
 				@SuppressWarnings("unused")
 				int read_bytes = in_file.read(msg);
 							
-				SecretKeySpec key = CryptoUtilities.key_from_seed(my_key.getBytes());
+				SecretKeySpec key = CryptoUtilities.key_from_seed(gBA.toByteArray());
 				
 				byte[] hashed_key = CryptoUtilities.append_hash(msg, key);
 				byte[] aes_ciphertext = CryptoUtilities.encrypt(hashed_key, key);

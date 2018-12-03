@@ -1,8 +1,10 @@
 import java.net.*;
+import java.util.Random;
 
 import javax.crypto.spec.SecretKeySpec;
 
 import java.io.*;
+import java.math.BigInteger;
 
 /**
  * Thread to deal with clients who connect to Server.  Put what you want the
@@ -158,10 +160,34 @@ public class ServerThread extends Thread{
 				if (incoming.compareTo("send") == 0) {
 					try {
 						
-						/* prompt for shared password */
-						String my_key = null;
-						System.out.print("Enter shared password: ");
-						my_key = stdIn.readLine();
+						/* read g and p*/
+						incoming = in.readUTF();
+						BigInteger g = new BigInteger(incoming);
+						incoming = in.readUTF();
+						BigInteger p = new BigInteger(incoming);
+						
+						if (debug) {
+							System.out.println("received public key");
+						}
+						
+						/* generate random 'b' */
+						BigInteger two = new BigInteger("2");
+						Random rnd = new Random();
+						BigInteger b = new BigInteger(512, rnd); 
+						b.mod(p.subtract(two));
+						
+						/* calculate g^b */
+						BigInteger gB = g.modPow(b, p);
+						
+						/* receive gA from client */
+						incoming = in.readUTF();
+						BigInteger gA = new BigInteger(incoming);
+						
+						/* send gB to client */
+						out.writeUTF(gB.toString());
+						
+						/* calculate gAB*/
+						BigInteger gAB = gA.modPow(b, p);
 						
 						/* read output file name and create it*/
 						incoming = in.readUTF();
@@ -177,6 +203,7 @@ public class ServerThread extends Thread{
 						}
 						out_file = new FileOutputStream(clientFile);
 						
+						
 						/* read file size */
 						int read_bytes = in.readInt();
 						if (debug) {
@@ -187,7 +214,7 @@ public class ServerThread extends Thread{
 						byte[] msg = new byte[read_bytes];
 						in.read(msg, 0, read_bytes);
 						
-						SecretKeySpec key = CryptoUtilities.key_from_seed(my_key.getBytes());
+						SecretKeySpec key = CryptoUtilities.key_from_seed(gAB.toByteArray());
 						
 						byte[] hashed_plaintext = CryptoUtilities.decrypt(msg, key);
 						

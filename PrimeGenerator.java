@@ -16,12 +16,12 @@ public class PrimeGenerator {
 		bit_length = length;
 		certainty = cert;
 		rand = new Random();
+		generate();
+		primitiveRoot();
 	}
 	
 	public static void main(String[] args) {
 		PrimeGenerator primes = new PrimeGenerator(512, 3);
-		primes.generate();
-		primes.primitiveRoot();
 	}
 	
 	public void generate() {
@@ -56,5 +56,8 @@ public class PrimeGenerator {
 	}
 	public BigInteger getP() {
 		return p;
+	}
+	public BigInteger getG() {
+		return g;
 	}
 }
