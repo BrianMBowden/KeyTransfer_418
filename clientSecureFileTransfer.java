@@ -138,12 +138,9 @@ public class clientSecureFileTransfer {
 				
 				int bit_length = 512;
 				int certainty = 3;
-				PrimeGenerator primes = new PrimeGenerator(bit_length, certainty);
+				PrimeGenerator primes = new PrimeGenerator(bit_length, certainty, debug);
 				
 
-				/* Write user file name to socket */
-				out.writeUTF(userinput);
-				
 				/* write g and p to socket (can be public)*/
 				out.writeUTF(primes.getG().toString());
 				out.writeUTF(primes.getP().toString());
@@ -172,6 +169,7 @@ public class clientSecureFileTransfer {
 				System.out.print("Enter Input File Name: ");
 				userinput = stdIn.readLine();
 				
+				
 				try {
 					File myFile = new File(userinput);
 					myFile.createNewFile();
@@ -189,10 +187,15 @@ public class clientSecureFileTransfer {
 				/* set up file IO*/
 				System.out.print("Enter Output File Name: ");
 				userinput = stdIn.readLine();
+				
 				if (debug) {
 					out_file = new FileOutputStream("debug.txt");
 				}
 				
+				/* Write user file name to socket */
+				out.writeUTF(userinput);
+				
+				/* Do the cryptography stuff*/
 				byte[] msg = new byte[in_file.available()];
 				@SuppressWarnings("unused")
 				int read_bytes = in_file.read(msg);
@@ -210,19 +213,28 @@ public class clientSecureFileTransfer {
 					System.out.println("cipher text length: " + aes_ciphertext.length);
 				}
 				
+				/* Give cipher text length and cipher text itself to server */
 				out.writeInt(aes_ciphertext.length);
 				out.write(aes_ciphertext);
 				
 				if (debug) {
 					System.out.println("wrote to socket");
 				}
-				out_file.close();
+				
+				if (debug){
+					out_file.close();
+				}
+				
 				if (in.readInt() == 0) {
-					System.out.println("server read went well");
+					System.out.println("---- Server read went well ----");
+					System.out.println("Thank you for using the Diffie Helman PKC");
 				}
 				else {
-					System.out.println("server read went poorly");
+					System.out.println("---- Server read went poorly ----");
+					System.out.println("We regret this message, try again by running the Diffie Hellman PKC");
 				}
+				
+				/* tell server this instance is done*/
 				out.writeUTF("exit");
 				sock.close();
 				return;
@@ -241,7 +253,7 @@ public class clientSecureFileTransfer {
     }
     
     private void messagePrompt() {
-    	System.out.println("============== Secure File Transfer System ============== ");
+    	System.out.println("=================== Diffie Hellman PKC =================== ");
     	System.out.println("Welcome...");
     	System.out.println("Here are your options: \n \n");
     	System.out.println("\t exit - kill current process");
@@ -249,7 +261,7 @@ public class clientSecureFileTransfer {
     	System.out.println("\t send - send file to be encrypted");
     	System.out.println("\t or you can send simple messages to the server\n");
     	System.out.println();
-    	System.out.println("========================================================= ");
+    	System.out.println("========================================================== ");
     	System.out.print("your choice: ");
     	return;
     }

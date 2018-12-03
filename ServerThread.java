@@ -83,7 +83,7 @@ public class ServerThread extends Thread{
 	     */
 	    public void run ()
 	    {
-	    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
+//	    BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 		DataInputStream in = null;
 		DataOutputStream out = null;
 		String incoming = null;

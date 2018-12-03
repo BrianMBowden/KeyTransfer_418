@@ -11,17 +11,21 @@ public class PrimeGenerator {
 	private BigInteger q;
 	private BigInteger p;
 	private BigInteger g;
+	private boolean __DEBUG__;
 	
-	public PrimeGenerator(int length, int cert) {
+	public PrimeGenerator(int length, int cert, boolean debug) {
 		bit_length = length;
 		certainty = cert;
 		rand = new Random();
+		__DEBUG__ = debug;
 		generate();
 		primitiveRoot();
 	}
 	
+	
 	public static void main(String[] args) {
-		PrimeGenerator primes = new PrimeGenerator(512, 3);
+		@SuppressWarnings("unused")
+		PrimeGenerator primes = new PrimeGenerator(512, 3, false);
 	}
 	
 	public void generate() {
@@ -33,9 +37,10 @@ public class PrimeGenerator {
 			p = q.multiply(two);
 			
 			p = p.add(one);
-			
-			System.out.println("p is : " + p.toString());
-			System.out.println("q is : " + q.toString());
+			if(__DEBUG__){
+				System.out.println("p is : " + p.toString());
+				System.out.println("q is : " + q.toString());
+			}
 			
 			prime = p.isProbablePrime(certainty);
 		}
@@ -48,7 +53,9 @@ public class PrimeGenerator {
 				break;
 			}
 		}
+		if (__DEBUG__){
 		System.out.println("primitive root g: " + g.toString());
+		}
 	}
 	
 	public BigInteger getQ() {
