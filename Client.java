@@ -29,7 +29,7 @@ import javax.crypto.spec.SecretKeySpec;
  * 		original file provided by department of computer science, University of Calgary, CPSC418
  * 		encryption code provided and used from CryptoUtilities.java, SecureFile.java 
  */
-public class clientSecureFileTransfer {
+public class Client {
 	private Socket sock;  //Socket to communicate with.
 	private static boolean debug;
 	
@@ -50,7 +50,7 @@ public class clientSecureFileTransfer {
 	try {
 		debug = args[2].compareTo("debug") == 0;
 	    @SuppressWarnings("unused")
-		clientSecureFileTransfer c = new clientSecureFileTransfer (args[0], Integer.parseInt(args[1]));
+		Client c = new Client (args[0], Integer.parseInt(args[1]));
 	}
 	catch (NumberFormatException e) {
 	    System.out.println ("Usage: java Client hostname port#");
@@ -64,7 +64,7 @@ public class clientSecureFileTransfer {
      * @param ipaddress The hostname to connect to.
      * @param port The port to connect to.
      */
-    public clientSecureFileTransfer (String ipaddress, int port)
+    public Client (String ipaddress, int port)
     {
 	/* Allows us to get input from the keyboard. */
 	BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));

@@ -33,7 +33,7 @@ import java.math.BigInteger;
  */
 public class ServerThread extends Thread{
 	    private Socket sock;  //The socket it communicates with the client on.
-	    private serverSecureFileTransfer parent;  //Reference to Server object for message passing.
+	    private Server parent;  //Reference to Server object for message passing.
 	    private int idnum;  //The client's id number.
 	    private boolean debug;
 		
@@ -43,7 +43,7 @@ public class ServerThread extends Thread{
 	     * @param p Reference to parent thread.
 	     * @param id ID Number.
 	     */
-	    public ServerThread (Socket s, serverSecureFileTransfer p, int id, Boolean d)
+	    public ServerThread (Socket s, Server p, int id, Boolean d)
 	    {
 		parent = p;
 		sock = s;

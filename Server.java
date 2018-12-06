@@ -26,7 +26,7 @@ import java.util.Vector;
  * 		original file provided by department of computer science, University of Calgary, CPSC418
  */
 
-public class serverSecureFileTransfer {
+public class Server {
     private ServerSocket serversock;
     private Vector <ServerThread> serverthreads;  //holds the active threads
     private boolean shutdown;  //allows clients to shutdown the server
@@ -49,7 +49,7 @@ public class serverSecureFileTransfer {
 		String debug_mode = args[1];
 		debug = debug_mode.compareTo("debug") == 0;
 	    @SuppressWarnings("unused")
-		serverSecureFileTransfer s = new serverSecureFileTransfer(Integer.parseInt(args[0]));
+		Server s = new Server(Integer.parseInt(args[0]));
 	}
 	catch (ArrayIndexOutOfBoundsException e) {
 	    System.out.println ("Usage: java Server port#");
@@ -67,7 +67,7 @@ public class serverSecureFileTransfer {
      * Constructor, makes a new server listening on specified port.
      * @param port The port to listen on.
      */
-    public serverSecureFileTransfer (int port)
+    public Server (int port)
     {
 	clientcounter = 0;
 	shutdown = false;
