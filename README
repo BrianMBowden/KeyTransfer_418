@@ -1,31 +1,34 @@
 Brian Bowden || 10060818
-November 7, 2018
-CPSC418 - Assignment 2
+December 5, 2018
+CPSC418 - Assignment 3
 ------------------------------------------------------------------------------
 Files included:
 
-clientSecureFileTransfer.java // client side source file for this assignment
+Client.java // client side source file for this assignment
 CryptoUtilities.java // a toolkit for AES encryption and HMAC
+Makefile // Simple Java Makefile
 plain.txt // for testing purposes with encryption
+PrimeGenerator.java // a class designed to do backend work with primes and BigInteger
 README // this document
-serverSecureFileTransfer.java // server side (and multi-threader) source file for this assignment 
+Server.java // server side (and multi-threader) source file for this assignment 
 ServerThread.java // child thread source file for server side
 ------------------------------------------------------------------------------
 NOTES:
 	I tested this using port 6666 and IP address 0.0.0.0
-	client will output its own "debug" file regardless of debug mode, this file is called "debug.txt"
 ------------------------------------------------------------------------------
 No KNOWN bugs...
 ----------------------tested using secondary terminal-------------------------
-compile both files:
-	javac clientSecureFileTransfer.java
-	javac serverSecureFileTransfer.java
+Compile both files with make
 	
-in one terminal: (server side)
-	java serverSecureFileTransfer [Port #] [debug]
+in one terminal: (server side) (debug)
+	java Server [Port #] [debug] 
+							   (no debug)
+	java Server [Port #] [<text>]							   
 
-in second terminal: (client side)
-	java clientSecureFileTransfer [IP-Address] [Port #] [debug]
+in second terminal: (client side) (debug)
+	java Client [IP-Address] [Port #] [debug]
+	                              (no debug)
+	java Client [IP-Address] [Port #] [<text>]	                              
 	// the IP address will appear on server side terminal, use this
 	
 port numbers must be equal
@@ -38,7 +41,10 @@ Client will be prompted for its decision/choice via user input from keyboard
 		if exit is selected and there are no other running processes on server, server will stay on
 	"die" will kill all threads associated with the server and shutdown the server
 	"send" will prompt the user again:
-		prompt for shared password // key to encrypt
+		generate public key
+		send public key to server
+		generate private key using the Diffie-Hellman PKC protocol
+	
 		prompt for file to be encrypted // client will (try to) create this file if it does not exist (it will be empty!)
 		prompt for file output //server will (try to) create this file if it does not exist
 		
@@ -51,7 +57,8 @@ Server receives input from client:
 	"exit" kill thread associated with client calling "exit"
 	"die" kill all threads and shutdown server
 	"send" prompt server:
-		prompt for shared password
+		receive public key from client
+		generates its own private key using the Diffie-Hellman PKC protocol
 
 		receive file output name // creates file with same name if it does not exist		
 		receive size of data buffer
@@ -74,6 +81,14 @@ Server stays alive
 Encryption done by AES-128-CBC standard with a shared session key between client and server
 Data Integrity kept by HMAC-SHA-1 with an appended message digest
 ----------------------------------------------------------------------------------
-
+Client instantiates Prime Generator to generate the public key {p,g}.
+The prime generator uses the BigInteger Java class to achieve this.
+It generates one prime, q, then creates another prime, p, asserting 2q+1 is prime.
+The generator will then get a primitive root of p, with a primitive root test, this g is relatively small.
+The client passes off the public key to the server.
+They both generate random integers a,b such that 2 < a,b < p
+They each generate a private key using g^i = y_i and sends these keys to each other.
+They each receive each others y_i, and then take it to their respective integer for encryption and decryption.   
+----------------------------------------------------------------------------------
 		
 	

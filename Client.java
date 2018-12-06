@@ -12,8 +12,8 @@ import javax.crypto.spec.SecretKeySpec;
  * 
  * clientSecureFileTransfer.java
  * 
- * compile with: javac clientSecureFileTransfer.java
- * execute with: java clientSecureFileTransfer [IP-Address] [Port #] [debug]
+ * compile with: javac Client.java
+ * execute with: java clientSecureFileTransfer [IP-Address] [Port #] [debug/no-debug]
  * 
  * Purpose:
  * 		

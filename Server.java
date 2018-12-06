@@ -14,8 +14,8 @@ import java.util.Vector;
  * 
  * serverSecureFileTransfer.java
  * 
- * compile with: javac serverSecureFileTransfer.java
- * execute with: java serverSecureFileTransfer [Port #] [debug]
+ * compile with: javac Server.java
+ * execute with: java Server [Port #] [debug/no-debug]
  * 
  * Purpose:
  * 
